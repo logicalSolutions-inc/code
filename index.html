@@ -1,816 +1,359 @@
 <!DOCTYPE html>
-<html lang="en" >
-   
-<head> 
-   
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logical Solutions | Main</title>
-    <script src="js/mod.js"></script>
-    <script src="js/allhandler.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-     <script src="js/taiwan.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Logical Solutions | Tpredictions.online</title>
     <link rel="shortcut icon" href="sources/IMG.jpg" type="image/x-icon">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-       <!-- Primary Meta Tags -->
-   <meta name="title" content="Logical Solutions | Python & Web Development Tutoring">
-   <meta name="description" content="Master Python and Web Development with personalized weekend classes. Advanced Python, Web Basics, and Integration tracks. Affordable monthly fees (R300–R500). Join via Zoom.">
-   <meta name="keywords" content="Python tutoring, Web Development classes, learn coding, programming tutor, weekend coding bootcamp, Python and web integration, affordable coding lessons, Zoom coding classes, South Africa">
-   <meta name="author" content="Logical Solutions">
-   <meta name="robots" content="index, follow">
-   <meta name="language" content="English">
-   <meta name="revisit-after" content="7 days">
-   
-   <!-- Canonical URL – prevents duplicate content issues -->
-   <link rel="canonical" href="https://www.logicalsolutions.org/">
-   
-   <!-- Open Graph / Facebook -->
-   <meta property="og:type" content="website">
-   <meta property="og:url" content="https://www.logicalsolutions.org/">
-   <meta property="og:title" content="Logical Solutions | Python & Web Development Tutoring">
-   <meta property="og:description" content="Master Python and Web Development with personalized weekend classes. Advanced Python, Web Basics, and Integration tracks. Affordable monthly fees (R300–R500). Join via Zoom.">
-   <meta property="og:image" content="https://www.logicalsolutions.org/sources/IMG.jpg">
-   
-   <!-- Twitter -->
-   <meta property="twitter:card" content="summary_large_image">
-   <meta property="twitter:url" content="https://www.logicalsolutions.org/">
-   <meta property="twitter:title" content="Logical Solutions | Python & Web Development Tutoring">
-   <meta property="twitter:description" content="Master Python and Web Development with personalized weekend classes. Advanced Python, Web Basics, and Integration tracks. Affordable monthly fees (R300–R500). Join via Zoom.">
-   <meta property="twitter:image" content="https://www.logicalsolutions.org/sources/IMG.jpg">
-   
-   <!-- Additional useful meta tags -->
-   <meta name="theme-color" content="#0f172a">
-   <meta name="mobile-web-app-capable" content="yes">
-   <meta name="apple-mobile-web-app-title" content="Logical Solutions">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#3b82f6',
+                            green: '#22c55e',
+                            red: '#ef4444',
+                            dark: '#0a0a0a',
+                            panel: '#111111'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: rgba(15, 15, 20, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5); 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.8); 
+        }
+        
+        .input-field {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .checkbox-custom {
+            accent-color: #3b82f6;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+    </style>
 </head>
+<body class="antialiased selection:bg-brand-blue selection:text-white">
 
-<body style="max-width:100vw;height:100vh;">
-    
-     <div id='mainloader' class="loading-container11">
-        <div class="title11">
-            <span class="letter11"></span>
-          <span class=""><img style="height:50px;width:50px; border-radius: 50%;display: inline;" src="sources/IMG.jpg"></span>
+    <!-- 3D Background Canvas -->
+    <div id="canvas-container"></div>
 
+    <!-- Dark Transparent Overlay -->
+    <div class="fixed inset-0 z-10 bg-black/60 bg-gradient-to-b from-black/40 via-transparent to-black/90 pointer-events-none"></div>
+
+    <!-- Main Content -->
+    <main class="relative z-20 min-h-screen w-full flex flex-col p-3 sm:p-4 md:p-6 lg:p-8 items-center justify-center">
         
-   
-      
-        </div>
-        <div class="loader11"></div>
-        <div id="username_loader11" class="subtitle11">Welcome</div>
-        <div id="state_loader11" class="subtitle11"></div>
+        <div class="w-full max-w-7xl flex flex-col gap-6">
+            <!-- Header Section -->
+            <header class="flex-none flex flex-col md:flex-row justify-between items-center mb-3 md:mb-6">
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-brand-blue glow-text mb-1">
+                        Tpredictions.online
+                    </h1>
+                    <p class="text-sm md:text-lg text-gray-400 font-light tracking-wide">
+                        What are the odds?
+                    </p>
+                </div>
+                
+                <div class="mt-2 md:mt-0 flex items-center space-x-3">
+                    <div class="h-2 w-2 rounded-full bg-brand-green animate-pulse"></div>
+                    <span class="text-[10px] md:text-xs font-mono text-gray-400 uppercase tracking-widest">System Online</span>
+                </div>
+            </header>
 
-        <div class="checkbox-container11">
-          <!-- <div id="vdata" class="check-box  hide_bx11">Validation</div> -->
-          <!-- <div id="fdata__" class="check-box  hide_bx11">Fetching Data</div> -->
-          <!-- <div id="ldata" class="check-box  hide_bx11">Loading Data</div> -->
-        </div>
-        <div class="particles11">
-          <div class="particle11" style="left: 10%; animation-delay: 0s;"></div>
-          <div class="particle11" style="left: 25%; animation-delay: 0.8s;"></div>
-          <div class="particle11" style="left: 40%; animation-delay: 1.6s;"></div>
-          <div class="particle11" style="left: 60%; animation-delay: 2.4s;"></div>
-          <div class="particle11" style="left: 80%; animation-delay: 3.2s;"></div>
-          <div class="particle11" style="left: 95%; animation-delay: 4s;"></div>
-        </div>
-
-    </div>
-      
-    <!-- Header -->
-   <header class="flex ">
-      <div class="logo flex items-center gap-3 animate-fade-in-down">
-        <div class="logo_img ">
-          <img id="iconm" style="border-radius: 50%;width:50px;height:50px" src="sources/IMG.jpg" alt="">
-        </div>
-        <div class="logo_name" id='usname'style="text-transform: uppercase;">Logical</div>
-      </div>
-      <nav>
-        <ul class="">
-          <li><a href="#"class="active_ anc"   id="Dashboard" >Main</a></li>
-      
-          <li><a href="Logged/posts/index.html" class="anc"  id="BTS" >Trends</a></li>
-          <li style="margin-right: 20px;"><a id="ll1" class="anc" style="color:white" href="login/index.html">Login</a></li>
-        </ul>
-        <button id="menu-btn" class="fixed top-7 right-4 z-50 flex flex-col gap-1">
-          <div class="w-6 h-0.5 bg-black transition-all duration-300" id="bar1"></div>
-          <div class="w-6 h-0.5 bg-black transition-all duration-300" id="bar2"></div>
-          <div class="w-6 h-0.5 bg-black transition-all duration-300" id="bar3"></div>
-        </button>
-
-        <!-- Overlay -->
-        <div id="overlay"
-          class="fixed inset-0 bg-white/60 backdrop-blur-md z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-        </div>
-
-        <div id="side-menu"
-          class="fixed top-0 right-0 w-80 h-full bg-white bg-opacity-80 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-l border-white/50 z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col p-6 gap-6">
-          <div class="flex justify-between items-center">
-
-            <h2 id="hmen" class="text-2xl font-extrabold text-gray-900 whitec"><img
-                style="height:50px;width:50px; border-radius: 50%;display: inline;" src="sources/IMG.jpg">
-              </h2>
-            <button id="close-btn" class="text-2xl font-bold text-gray-500 hover:text-gray-900 whitec">×</button>
-          </div>
-          <a href="#" id='ot3'
-            class="flex items-center gap-2 text-lg text-gray-700 hover:text-indigo-600 transition-all duration-200 whitec">
-            🏠 <span >Main</span>
-          </a>
-         
-          <a href="Logged/posts/index.html"
-            class="flex items-center gap-2 text-lg text-gray-700 hover:text-indigo-600 transition-all duration-200 whitec">
-            📈 <span>Trends</span>
-          </a>
-          
-          <a href="login/index.html" id="ll2" 
-            class="flex items-center gap-2 text-lg text-gray-700 hover:text-indigo-600 transition-all duration-200 whitec">
-            🚪 <span id='ot4'>Login</span>
-          </a>
-        </div>
-        <script>
-          if (true){
-              const stylesheet =document.getElementById("menu-btn");
-                  stylesheet.innerHTML=` <div class="w-6 h-0.5 bg-white transition-all duration-300" id="bar1"></div>
-              <div class="w-6 h-0.5 bg-white transition-all duration-300" id="bar2"></div>
-              <div class="w-6 h-0.5 bg-white transition-all duration-300" id="bar3"></div>`
-
-              document.getElementById('overlay').setAttribute('class','fixed inset-0 bg-black/60 backdrop-blur-md z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out')
-              document.getElementById('hmen').setAttribute('class','text-2xl font-extrabold text-white-900')
-              
-              document.getElementById('side-menu').setAttribute('class','fixed top-0 right-0 w-80 h-full bg-black bg-opacity-70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.1)] border-l border-white/50 z-50 transform translate-x-full transition-transform duration-500 ease-in-out flex flex-col p-6 gap-6')
-
-               document.querySelectorAll('.whitec').forEach(element =>{
-                element.setAttribute('class','flex items-center gap-2 text-lg text-white-700 hover:text-indigo-600 transition-all duration-200 whitec')
-              })
-
-
-          }
-        </script>
-      </nav>
-
-
-    </header>
-
-  
-    
-
-    <div class="smoother">
-      <div class="line"></div>
-    </div>
-    
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <video class="hero-bg-video" autoplay muted loop playsinline poster="sources/IMG.jpg">
-          <source src="sources/v1.mp4" type="video/mp4">
-          <!-- Fallback image if video not supported -->
-        </video>
-        <div class="hero-overlay"></div>
-        <div class="hero-content animate__animated animate__fadeInDown" data-aos="fade-up">
-          <h1 class="hero-title animate__animated animate__fadeInDown" data-aos="fade-up">Master <span>Python & Web Development</span></h1>
-          <p class="hero-desc animate__animated animate__fadeInUp" data-aos="fade-up" data-aos-delay="200">Struggling with programming? Let's code together.</p>
-        
-          <a href="#cta" class="cta-btn animate__animated animate__pulse animate__infinite" data-aos="zoom-in" data-aos-delay="400">Get Started Now</a>
-        </div>
-      </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-header">
-                <h2>Our Programs</h2>
-                <p>Choose from three specialized tracks to boost your coding skills.</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bolt"></i>
+            <!-- Main Terminal/Display Area -->
+            <div class="flex-1 flex flex-col lg:flex-row gap-4 md:gap-6 min-h-0">
+                
+                <!-- Left Side: Configuration Inputs -->
+                <div class="flex-none lg:flex-1 lg:max-w-md glass-panel rounded-xl p-4 md:p-6 flex flex-col relative overflow-hidden group">
+                    <!-- Decorative top line -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-blue to-transparent"></div>
+                    
+                    <div class="flex items-center mb-4 md:mb-6 flex-none">
+                        <svg class="w-4 h-4 md:w-5 md:h-5 text-brand-blue mr-2 md:mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <h2 class="text-lg md:text-xl font-semibold text-white">Algorithm Config</h2>
                     </div>
-                    <h3>Advanced Python</h3>
-                    <p>Master problem-solving with Python. In-depth breakdown of concepts. R500/month. Sat & Sun 6-8pm.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3>Web Development Basics</h3>
-                    <p>Learn HTML, CSS, JavaScript from scratch. Build responsive websites. R300/month. Sat & Sun 10am-12pm.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Integration: Python + Web</h3>
-                    <p>Combine backend logic with frontend presentation. Present outputs intuitively. R400/month. Sat & Sun 9-11pm.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Personalized Tutoring</h3>
-                    <p>One-on-one attention via Zoom. Lessons tailored to your pace and goals.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <h3>Flexible Schedule</h3>
-                    <p>Sessions on Saturdays and Sundays at multiple time slots to fit your availability.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <h3>Affordable Pricing</h3>
-                    <p>Monthly packages starting at R300. Pay only for the program you need.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- How It Works -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <h2>Your Learning Journey</h2>
-                <p>Simple steps to start coding with us.</p>
-            </div>
-            
-            <div class="process">
-                <div class="process-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Choose Your Program</h3>
-                        <p>Select from Python, Web Development, or Integrated track based on your goals.</p>
-                    </div>
-                </div>
-                
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Register & Pay</h3>
-                        <p>Contact us to secure your spot. Monthly fees as listed, with easy payment options.</p>
-                    </div>
-                </div>
-                
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Join Zoom Session</h3>
-                        <p>Receive the meeting link and join at your scheduled time (Sat/Sun).</p>
-                    </div>
-                </div>
-                
-                <div class="process-step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>Learn & Practice</h3>
-                        <p>Interactive coding sessions with real-time feedback and hands-on exercises.</p>
-                    </div>
-                </div>
-                
-                <div class="process-step">
-                    <div class="step-number">5</div>
-                    <div class="step-content">
-                        <h3>Build Projects</h3>
-                        <p>Apply skills to real-world projects and improve your coding intuition.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    <form class="flex-1 grid grid-cols-2 lg:grid-cols-1 gap-x-3 gap-y-3 font-mono text-xs md:text-sm min-h-0">
+                        
+                        <!-- Ticker -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Ticker Symbol</label>
+                            <input type="text" id="ticker" value="USDJPY" class="w-full input-field rounded-lg px-3 py-2 font-bold text-brand-blue" oninput="updateFilename()">
+                        </div>
 
-    <!-- Program Details (formerly Limitations) -->
-    <section class="limitations" id="limitations">
-        <div class="container">
-            <div class="section-header">
-                <h2>Program Details</h2>
-                <p>Detailed information about our tutoring programs.</p>
-            </div>
-            
-            <div class="limitations-grid">
-                <div class="limitation-card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Python Problem-Solving</h3>
-                    <p>Advanced concepts, in-depth breakdown. Saturdays & Sundays 6pm-8pm. R500/month.</p>
-                </div>
-                
-                <div class="limitation-card">
-                    <h3><i class="fas fa-database"></i> Web Development Basics</h3>
-                    <p>HTML, CSS, JavaScript. Build your first websites. Saturdays & Sundays 10am-12pm. R300/month.</p>
-                </div>
-                
-                <div class="limitation-card">
-                    <h3><i class="fas fa-user-friends"></i> Integration: Python + Web</h3>
-                    <p>Combine backend and frontend for intuitive outputs. Saturdays & Sundays 9pm-11pm. R400/month.</p>
-                </div>
-                
-                <div class="limitation-card">
-                    <h3><i class="fas fa-cloud-sun"></i> All Sessions Online</h3>
-                    <p>Held via Zoom. Easy access from anywhere. Recordings available upon request.</p>
-                </div>
-                
-                <div class="limitation-card">
-                    <h3><i class="fas fa-lock"></i> Contact Us</h3>
-                    <p>Cell: 062 962 0814<br>Email: technify.u.me@gmail.com<br>Website: LogicalSolutions.org</p>
-                </div>
-                
-                <div class="limitation-card">
-                    <h3><i class="fas fa-chart-bar"></i> Why Learn With Us?</h3>
-                    <p>Personalized attention, practical projects, and flexible scheduling to fit your lifestyle.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+                        <!-- Filename -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Target Data Source</label>
+                            <div class="relative">
+                                <input type="text" id="filename" value="USDJPY.csv" class="w-full input-field rounded-lg px-3 py-2 text-gray-300" readonly>
+                                <span class="absolute right-2 top-2 md:right-3 md:top-2 text-[10px] text-gray-500">AUTO</span>
+                            </div>
+                        </div>
 
+                        <!-- Analyser -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Analyser</label>
+                            <select id="analyser" class="w-full input-field rounded-lg px-3 py-2 appearance-none">
+                                <option value="v4" selected>v4</option>
+                                <option value="v3">v3</option>
+                                <option value="v2">v2</option>
+                            </select>
+                        </div>
 
-    <!-- CTA Section -->
-    <section class="cta" id="cta">
-        <div id="cta_main" class="container">
-            <div id='ctac' class="cta-content cta-content2">
-                <h2>Ready to Start Coding?</h2>
-                 <div class="code-snippet-module">
+                        <!-- HTML Displayer -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Displayer Engine</label>
+                            <select id="html_displayer" class="w-full input-field rounded-lg px-3 py-2 appearance-none">
+                                <option value="v3" selected>v3</option>
+                                <option value="v2">v2</option>
+                            </select>
+                        </div>
 
-            <div class="code-window">
-            
-            <div class="header">
-            <div class="dot red"></div>
-            <div class="dot yellow"></div>
-            <div class="dot green"></div>
-            <div class="file">learning.py</div>
-            </div>
+                        <!-- Period (NEW) -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Period</label>
+                            <select id="period" class="w-full input-field rounded-lg px-3 py-2 appearance-none">
+                                <option value="1min">1 min</option>
+                                <option value="5min" selected>5 min</option>
+                                <option value="15min">15 min</option>
+                                <option value="30min">30 min</option>
+                                <option value="60min">1 hour</option>
+                                <option value="240min">4 hours</option>
+                                <option value="1440min">Daily</option>
+                                <option value="7200min">Weekly</option>
+                            </select>
+                        </div>
 
-            <pre></pre>
+                        <!-- Date (NEW) -->
+                        <div class="col-span-1 space-y-1 md:space-y-2">
+                            <label class="text-gray-400 block ml-1 text-[10px] md:text-xs uppercase tracking-wider">Reference Date</label>
+                            <input type="date" id="refdate" value="2026-06-01" class="w-full input-field rounded-lg px-3 py-2">
+                        </div>
 
-            </div>
-            </div>
-                       
+                        <!-- Booleans -->
+                        <div class="col-span-2 lg:col-span-1 pt-2 md:pt-4 border-t border-white/10 flex flex-row lg:flex-col justify-around lg:justify-start gap-2">
+                            <label class="flex items-center space-x-2 md:space-x-3 cursor-pointer group">
+                                <input type="checkbox" id="disp_html_only" checked class="checkbox-custom rounded bg-transparent border-gray-600 focus:ring-brand-blue w-4 h-4 md:w-5 md:h-5">
+                                <span class="text-gray-300 group-hover:text-white transition-colors text-[10px] md:text-xs">disp_html_only = True</span>
+                            </label>
                             
-                <div class="hero-buttons">
-                    <a target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdNx6GA_LMThp69IltO4u0_0z2lObsLjx5Wnxlp6VYi3LQjpQ/viewform?usp=dialog" id='tbtn'class="btn btn-primary">Register</a>
-                    <a href="#" id="dbtn" class="btn btn-outline hide">Request Demo</a>
+                            <label class="flex items-center space-x-2 md:space-x-3 cursor-pointer group">
+                                <input type="checkbox" id="ratings" checked class="checkbox-custom rounded bg-transparent border-gray-600 focus:ring-brand-blue w-4 h-4 md:w-5 md:h-5">
+                                <span class="text-gray-300 group-hover:text-white transition-colors text-[10px] md:text-xs">ratings = True</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Initialize Button -->
+                        <div class="col-span-2 lg:col-span-1 mt-auto lg:mt-4">
+                            <button type="button" id="init-btn" class="w-full bg-brand-blue hover:bg-blue-600 text-white font-bold py-2 md:py-3 px-4 rounded-lg shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] transition-all duration-300 flex justify-center items-center group text-xs md:text-sm">
+                                <span id="init-text">Initialize Engine</span>
+                                <svg class="w-4 h-4 md:w-5 md:h-5 ml-1 md:ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                
-            </div>
 
-             
-                  <div id="demoss" class="container33 hide ">
+                <!-- Right Side: Display Area -->
+                <div class="flex-1 glass-panel rounded-xl p-1.5 md:p-2 relative flex flex-col">
+                    
+                    <!-- Terminal Header Bar -->
+                    <div class="flex items-center justify-between px-3 md:px-4 py-2 border-b border-white/5 bg-black/40 rounded-t-lg flex-none">
+                        <div class="flex space-x-1.5 md:space-x-2">
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-brand-red"></div>
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-brand-green"></div>
+                        </div>
+                        <div class="text-[10px] md:text-xs font-mono text-gray-500">display_viewport // local_link</div>
+                    </div>
 
-        <div class="holder">
-          <div id="cencon" class="container-bts">
-            <div class="form">
-              <div class="cap"><img
-                style="height:50px;width:50px; border-radius: 50%;display: inline;" src="favicon.ico">LogicalSolutions <span id="M"></span><span id="T"></span><span id="E"></span></div>
-              <label id='label33' for="input">Match: <input id="input" placeholder="liverpool vs chealsea" type="text" minlength="4"/></label>
-              <button class="btn btn33" onclick="predict()" >submit</button>
-             
-             
-            </div>
-          </div>
-          
-          <div>
-            <div class="output"></div>
-            <div class="progress-container hide">
-        <div class="progress-bar" id="progress-bar">50%</div>
-    </div>
-    <div class="progress-label hide">Progress: <span id="progress-text">50%</span></div>
-    
-          </div>
-        </div>
-      </div>
-       
-        </div>
-    </section>
+                    <!-- Display Content / Visualization Mockup -->
+                    <div class="flex-1 flex flex-col justify-center items-center relative overflow-hidden p-0 min-h-[500px]">
+                        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjA0KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] z-0 pointer-events-none opacity-50"></div>
+                        
+                        <!-- Standby State -->
+                        <div id="standby-state" class="z-10 text-center flex flex-col items-center justify-center h-full w-full p-4 transition-all duration-300">
+                            <div class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-blue/10 border border-brand-blue/30 mb-4 relative flex-none">
+                                <div class="absolute inset-0 rounded-full border-t-2 border-brand-blue animate-spin"></div>
+                                <svg class="w-8 h-8 md:w-10 md:h-10 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </div>
+                            <h3 id="status-title" class="text-xl md:text-2xl font-bold text-white mb-1 md:mb-2 flex-none">Awaiting Parameters</h3>
+                            <p id="status-desc" class="text-gray-400 max-w-sm mx-auto text-xs md:text-sm flex-none">
+                                The visualizer is standing by. Adjust configurations to generate models.
+                            </p>
+                            
+                            <!-- Simulated Live Data Feed -->
+                            <div id="terminal-feed" class="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-white/10 w-full text-left font-mono text-[10px] md:text-xs text-gray-500 flex flex-col space-y-1 overflow-y-auto max-h-[80px] md:max-h-[120px] custom-scrollbar">
+                                <p>> Loading default weights... <span class="text-brand-green">OK</span></p>
+                                <p>> Connecting to data stream... <span class="text-brand-green">OK</span></p>
+                                <p>> Standing by for user execution...</p>
+                            </div>
+                        </div>
 
-    <script>
-        let demo = document.getElementById('demoss')
-        let ctac = document.getElementById('ctac')
-        let dbtn = document.getElementById('dbtn')
-        dbtn.addEventListener('click',()=>{
-            demo.classList.remove('hide')
-            demo.classList.add('cta-content')
-            ctac.classList.add('hide')
-
-        })
-       
-
-    </script>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>LogicalSolutions</h3>
-                    <p>Empowering you with coding skills through personalized tutoring. Master Python, Web Development, and their integration.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <!-- Real Explainer HTML Display (Hidden by default) -->
+                        <iframe id="explainer-frame" class="z-20 w-full h-full min-h-[600px] border-0 bg-transparent hidden rounded-b-lg"></iframe>
                     </div>
                 </div>
-                
-                <div class="footer-col">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#features"><i class="fas fa-chevron-right"></i> Programs</a></li>
-                        <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How It Works</a></li>
-                        <li><a href="#limitations"><i class="fas fa-chevron-right"></i> Program Details</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Pricing</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-col">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> API Reference</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Case Studies</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Research Papers</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-col">
-                    <h3>Contact Us</h3>
-                    <ul class="footer-links">
-                        <li><a href="mailto:technify.u.me@gmail.com"><i class="fas fa-envelope"></i> technify.u.me@gmail.com</a></li>
-                        <li><a href="tel:+27629620814"><i class="fas fa-phone"></i> 062 962 0814</a></li>
-                        <li><a href="https://LogicalSolutions.org" target="_blank"><i class="fas fa-globe"></i> LogicalSolutions.org</a></li>
-                    </ul>
-                </div>
             </div>
             
-            <div class="copyright">
-                <p>&copy; 2025 LogicalSolutions All rights reserved. |  <span class="message m2"><a href='Terms _and_Conditions/index.html'>Terms and Conditions</a></span></p>
-            </div>
+            <!-- Footer -->
+            <footer class="flex-none mt-4 md:mt-6 text-center text-gray-600 text-[10px] md:text-xs border-t border-white/5 pt-3 md:pt-4">
+                &copy; 2026 Logical Solutions. All systems secure.
+            </footer>
         </div>
-    </footer>
-    <script src="js/index.js">
-        
-    </script>
+    </main>
 
+    <!-- JavaScript for UI Interactivity and 3D Animation -->
     <script>
-        // Mobile Navigation Toggle
-       
-      
-        
-        // Header scroll effect
-        
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Animation on scroll
-        const animateOnScroll = () => {
-            const elements = document.querySelectorAll('.feature-card, .process-step, .limitation-card');
+        function updateFilename() {
+            const ticker = document.getElementById('ticker').value;
+            document.getElementById('filename').value = ticker ? `${ticker}.csv` : '';
+        }
+
+        function addTerminalLine(text, status = null) {
+            const feed = document.getElementById('terminal-feed');
+            const p = document.createElement('p');
+            if (status) {
+                p.innerHTML = `> ${text} <span class="${status === 'OK' ? 'text-brand-green' : 'text-brand-red'}">${status}</span>`;
+            } else {
+                p.innerHTML = `> ${text}`;
+            }
+            feed.appendChild(p);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        // Main Fetch Logic for the Engine
+        document.getElementById('init-btn').addEventListener('click', async () => {
+            const ticker = document.getElementById('ticker').value;
+            const filename = document.getElementById('filename').value;
+            const analyser = document.getElementById('analyser').value;
+            const htmlDisplayer = document.getElementById('html_displayer').value;
+            const ratings = document.getElementById('ratings').checked;
+            const period = document.getElementById('period').value;        // NEW
+            const refdate = document.getElementById('refdate').value;    // NEW
             
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.3;
-                
-                if (elementPosition < screenPosition) {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
+            const btnText = document.getElementById('init-text');
+            const standbyState = document.getElementById('standby-state');
+            const iframe = document.getElementById('explainer-frame');
+            const statusTitle = document.getElementById('status-title');
+            const statusDesc = document.getElementById('status-desc');
+
+            btnText.innerText = "Processing...";
+            iframe.classList.add('hidden');
+            standbyState.classList.remove('hidden');
+            statusTitle.innerText = "Processing Data";
+            statusDesc.innerText = "Transmitting to local python server and generating market structures...";
+            
+            addTerminalLine(`Transmitting payload for ${ticker}...`, 'OK');
+
+            try {
+                const response = await fetch('https://sculpin-charming-directly.ngrok-free.app/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ticker: ticker,
+                        filename: filename,
+                        analyser: analyser,
+                        html_displayer: htmlDisplayer,
+                        ratings: ratings,
+                        period: period,      // NEW
+                        date: refdate        // NEW
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned status: ${response.status}`);
                 }
-            });
-        };
-        
-        // Set initial state for animated elements
-        document.querySelectorAll('.feature-card, .process-step, .limitation-card').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+                addTerminalLine("Awaiting HTML generator...", "OK");
+                
+                const htmlContent = await response.text();
+                addTerminalLine("Render payload received.", "OK");
+
+                setTimeout(() => {
+                    standbyState.classList.add('hidden');
+                    iframe.classList.remove('hidden');
+                    iframe.srcdoc = htmlContent; 
+                    btnText.innerText = "Initialize Engine";
+                }, 600);
+
+            } catch (error) {
+                console.error("Error communicating with Flask:", error);
+                statusTitle.innerText = "Connection Failed";
+                statusDesc.innerText = "Could not reach localhost:5000. Is the Flask app running?";
+                addTerminalLine("CONNECTION ERROR", "FAIL");
+                btnText.innerText = "Retry Initialization";
+            }
         });
-        
-        // Trigger animations on scroll
-        window.addEventListener('scroll', animateOnScroll);
-        // Initial check in case elements are already in view
-        window.addEventListener('load', animateOnScroll);
+
+        const scene = new THREE.Scene();
+        // 3D background initialization (unchanged)
     </script>
-
- <script>
-        function getHomePath(){
-  basePath= window.location.pathname.split('/')
-
-       let npath=''
-       if (line=='https://sculpin-charming-directly.ngrok-free.app'){
-
-        npath=bpath
-       }else{
-             for ( i in basePath){
-          npath=npath + '/' + basePath[i]
-          // console.log(npath)
-          if (basePath[i]=='WEBAPP'){
-            break
-          }
-      }
-       }
-       
-    return npath
-}
-        let homepath= getHomePath()
-        localStorage.setItem('Freeprev_path',`${homepath}/${indh}`)
-        localStorage.setItem('typeOfPath','Return to Home')
-    </script>
-
-
-<style>
-.code-snippet-module {
-    display: flex;
-    justify-content: center;
-    margin: 40px auto;
-    font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace;
-    max-width: 900px;          /* prevents overly wide lines on large displays */
-    width: 100%;
-    padding: 0 20px;           /* consistent side padding */
-    box-sizing: border-box;
-}
-
-.code-window {
-    width: 100%;
-    background: #0f172a;
-    border-radius: 16px;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    overflow: hidden;
-    transition: border-radius 0.2s, box-shadow 0.2s;
-}
-
-.header {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 12px 16px;
-    background: #020617;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    flex-wrap: wrap;           /* allow items to wrap if screen is tiny */
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.red { background: #ff5f56; }
-.yellow { background: #ffbd2e; }
-.green { background: #27c93f; }
-
-.file {
-    margin-left: 5px;
-    font-size: 13px;
-    color: #94a3b8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;          /* avoid extremely long file names */
-}
-
-pre {
-    margin: 0;
-    padding: 10px;
-    font-size: clamp(14px, 3.5vw, 16px);  /* fluid, capped at 16px */
-    line-height: 1.7;
-    color: #e2e8f0;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    background: #0f172a;       /* ensures consistency */
-}
-
-/* syntax highlighting (unchanged) */
-.keyword { color: #38bdf8; }
-.variable { color: #facc15; }
-.function { color: #a78bfa; }
-.number { color: #22c55e; }
-
-.cursor {
-    display: inline-block;
-    width: 9px;
-    background: #38bdf8;
-    margin-left: 4px;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 50%, 100% { opacity: 1; }
-    25%, 75% { opacity: 0; }
-}
-
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-
-/* Large tablets and small desktops */
-@media (max-width: 1024px) {
-    .code-snippet-module {
-        max-width: 800px;
-        padding: 0 24px;
-    }
-    pre {
-        font-size: 15px;
-        padding: 22px;
-    }
-}
-
-/* Tablets (landscape and portrait) */
-@media (max-width: 768px) {
-    .code-window {
-        border-radius: 14px;
-    }
-    .header {
-        padding: 10px 14px;
-    }
-    .file {
-        font-size: 12px;
-        max-width: 150px;
-    }
-    pre {
-        padding: 20px;
-        line-height: 1.6;
-    }
-}
-
-/* Phones (large) */
-@media (max-width: 600px) {
-    .code-snippet-module {
-        padding: 0 16px;
-        margin: 30px auto;
-    }
-    .header {
-        gap: 6px;
-        padding: 8px 12px;
-    }
-    .dot {
-        width: 10px;
-        height: 10px;
-    }
-    .file {
-        font-size: 11px;
-        max-width: 120px;
-        margin-left: 6px;
-    }
-    pre {
-        padding: 16px;
-        font-size: 14px;
-    }
-    .cursor {
-        width: 7px;
-    }
-}
-
-/* Small phones */
-@media (max-width: 480px) {
-    .code-snippet-module {
-        padding: 0 8px;
-        margin: 20px auto;
-    }
-    .header {
-        padding: 8px 10px;
-        gap: 5px;
-    }
-    .dot {
-        width: 8px;
-        height: 8px;
-    }
-    .file {
-        font-size: 10px;
-        max-width: 100px;
-        margin-left: 4px;
-    }
-    pre {
-        padding: 12px;
-        font-size: clamp(12px, 4vw, 14px);
-        line-height: 1.5;
-    }
-}
-
-/* Very narrow (foldables, 320px and below) */
-@media (max-width: 360px) {
-    .header {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
-    }
-    .file {
-        width: 100%;
-        text-align: center;
-        margin-left: 0;
-        max-width: none;
-        white-space: normal;    /* allow wrapping when needed */
-    }
-    pre {
-        padding: 10px;
-        font-size: 12px;
-    }
-}
-
-/* Landscape orientation on phones (short screens) */
-@media (max-height: 500px) and (orientation: landscape) {
-    .code-snippet-module {
-        margin: 10px auto;
-    }
-    pre {
-        max-height: 60vh;
-        overflow-y: auto;
-        padding: 12px;
-    }
-}
-
-/* High‑resolution / large desktop screens */
-@media (min-width: 1800px) {
-    .code-snippet-module {
-        max-width: 1000px;      /* slightly wider but still comfortable */
-    }
-    pre {
-        font-size: 17px;
-        padding: 28px;
-        line-height: 1.8;
-    }
-}
-</style>
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-const codeText = `marks = write(Exam)
-while marks <= 90%:
-                   chow_course("Buff-effort")`;
-
-const code = document.querySelector(".code-snippet-module pre");
-
-let i = 0;
-
-function type(){
-
-if(i < codeText.length){
-
-code.textContent += codeText.charAt(i);
-i++;
-
-setTimeout(type,30);
-
-}else{
-highlight();
-}
-
-}
-
-function highlight(){
-
-let html = code.textContent;
-
-html = html.replace(/marks/g,'<span class="variable">marks</span>');
-html = html.replace(/while/g,'<span class="keyword">while</span>');
-html = html.replace(/input/g,'<span class="function">input</span>');
-html = html.replace(/chow_course/g,'<span class="function"> chow_course</span>');
-html = html.replace(/90/g,'<span class="number">90</span>');
-
-code.innerHTML = html + '<span class="cursor"></span>';
-
-}
-
-type();
-
-});
-
-</script>
-
-   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "name": "Logical Solutions",
-  "url": "https://www.logicalsolutions.org",
-  "logo": "https://www.logicalsolutions.org/sources/IMG.jpg",
-  "description": "Weekend coding classes in Python, Web Development, and Integration via Zoom.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "ZA"
-  },
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+27-62-962-0814",
-    "contactType": "customer service",
-    "email": "technify.u.me@gmail.com"
-  }
-}
-</script>
 </body>
 </html>
